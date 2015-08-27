@@ -72,4 +72,8 @@ def crawl_web(seed):
            	crawled.append(page)
 	return index
 
+
+# Instruction:
+# Just pass a link as the seed to crawl_web
+# If you don't have the Internet access at the time, use get_page_simulate() as the get_page() function instead.
 print crawl_web("https://www.udacity.com/course/viewer#!/c-cs101/l-48689146/m-48701394")
