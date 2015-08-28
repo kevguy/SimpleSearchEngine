@@ -54,12 +54,11 @@ def get_all_links(page):
 	return links
 
 def add_to_index(index, keyword, url):
-    for entry in index:
-        if entry[0] == keyword:
-            entry[1].append(url)
-            return
-    # not found, add new keyword to index
-    index.append([keyword, [url]])
+    if keyword in index:
+        index[keyword].append(url)
+    else:
+        # not found, add new keyword to index
+        index[keyword] = [url]
 
 def add_page_to_index(index,url,content):
     word_list = content.split()
@@ -71,7 +70,7 @@ def add_page_to_index(index,url,content):
 def crawl_web(seed):
 	tocrawl = [seed]
 	crawled = []
-	index = []
+	index = {}
 	while tocrawl:
 		page = tocrawl.pop()
 		if page not in crawled:
