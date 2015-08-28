@@ -71,17 +71,38 @@ def crawl_web(seed):
 	tocrawl = [seed]
 	crawled = []
 	index = {}
-    graph = {}
+	graph = {}
 	while tocrawl:
 		page = tocrawl.pop()
 		if page not in crawled:
 			content = get_page(page)
 			add_page_to_index(index,page,content)
-            outlinks = get_all_links(content)
-            graph[page] = outlinks
+			outlinks = get_all_links(content)
+			graph[page] = outlinks
 			union(tocrawl, outlinks)
            	crawled.append(page)
 	return index, graph
+
+def compute_ranks(graph):
+    d = 0.8 # damping factor
+    numloops = 10 # time step
+
+    ranks = {}
+    npages = len(graph)
+    for page in graph:
+        ranks[page] = 1.0 / npages
+
+    for i in range(0, numloops):
+        newranks = {}
+        for page in graph:
+            newrank = (1 - d) / npages
+            # update by summing in the inlink ranks
+            for node in graph:
+                if page in graph[node]:
+                    newrank = newrank + d * (ranks[node] / len(graph[node]))
+            newranks[page] = newrank
+        ranks = newranks
+    return ranks
 
 def lookup(index, keyword):
     if keyword in index:
@@ -92,4 +113,16 @@ def lookup(index, keyword):
 # Instruction:
 # Just pass a link as the seed to crawl_web
 # If you don't have the Internet access at the time, use get_page_simulate() as the get_page() function instead.
-print crawl_web("https://www.udacity.com/course/viewer#!/c-cs101/l-48689146/m-48701394")
+#print crawl_web("https://www.udacity.com/course/viewer#!/c-cs101/l-48689146/m-48701394")
+
+
+index, graph = crawl_web('http://udacity.com/cs101x/urank/index.html')
+ranks = compute_ranks(graph)
+print ranks
+
+#>>> {'http://udacity.com/cs101x/urank/kathleen.html': 0.11661866666666663,
+#'http://udacity.com/cs101x/urank/zinc.html': 0.038666666666666655,
+#'http://udacity.com/cs101x/urank/hummus.html': 0.038666666666666655,
+#'http://udacity.com/cs101x/urank/arsenic.html': 0.054133333333333325,
+#'http://udacity.com/cs101x/urank/index.html': 0.033333333333333326,
+#'http://udacity.com/cs101x/urank/nickel.html': 0.09743999999999997}
