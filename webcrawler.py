@@ -80,6 +80,11 @@ def crawl_web(seed):
            	crawled.append(page)
 	return index
 
+def lookup(index, keyword):
+    if keyword in index:
+        return index[keyword]
+    else:
+        return None
 
 # Instruction:
 # Just pass a link as the seed to crawl_web
