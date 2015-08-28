@@ -71,14 +71,17 @@ def crawl_web(seed):
 	tocrawl = [seed]
 	crawled = []
 	index = {}
+    graph = {}
 	while tocrawl:
 		page = tocrawl.pop()
 		if page not in crawled:
 			content = get_page(page)
 			add_page_to_index(index,page,content)
-			union(tocrawl, get_all_links(content))
+            outlinks = get_all_links(content)
+            graph[page] = outlinks
+			union(tocrawl, outlinks)
            	crawled.append(page)
-	return index
+	return index, graph
 
 def lookup(index, keyword):
     if keyword in index:
