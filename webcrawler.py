@@ -53,11 +53,20 @@ def get_all_links(page):
 			break
 	return links
 
+def add_to_index(index, keyword, url):
+    for entry in index:
+        if entry[0] == keyword:
+            entry[1].append(url)
+            return
+    # not found, add new keyword to index
+    index.append([keyword, [url]])
+
 def add_page_to_index(index,url,content):
     word_list = content.split()
     for e in word_list:
-        index.append([e, [url]])
-    return
+        add_to_index(index, e, url)
+        #index.append([e, [url]])
+    #return
 
 def crawl_web(seed):
 	tocrawl = [seed]
